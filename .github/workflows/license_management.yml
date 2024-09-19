@@ -1,6 +1,9 @@
 name: Mirror Users with Team
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: '0 0 * * *' # Runs daily at midnight
   workflow_dispatch: # Allows manual trigger
@@ -9,6 +12,20 @@ jobs:
   mirror-users:
     runs-on: ubuntu-latest
     steps:
+      # This step sets up Node.js version 20
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # This step installs the @octokit/action npm package
+      - run: npm install @octokit/action@6.1.0
+      # This step gets a GitHub App installation access token
+      - name: Get Token
+        id: get_workflow_token
+        uses: peter-murray/workflow-application-token-action@v3
+        with:
+          application_id: ${{ secrets.APPLICATION_ID }}
+          application_private_key: ${{ secrets.APPLICATION_PRIVATE_KEY }}   
+      
       - name: Checkout repository
         uses: actions/checkout@v2
 
