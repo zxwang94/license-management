@@ -37,8 +37,10 @@ jobs:
         shell: pwsh
         run: |
           $users = (Get-Content users.json | ConvertFrom-Json).PSObject.Properties.Name 
+          Write-Host "Users: $users"
           $team_members = gh api orgs/${{ github.repository_owner }}/teams/copilot-licenses-users/members | ConvertFrom-Json | ForEach-Object { $_.login }
-          
+          Write-Host "Team members: $team_members"
+
           # Add missing users to the team
           foreach ($user in $users) {
             if (-not $team_members.Contains($user)) {
