@@ -42,7 +42,6 @@ jobs:
           GITHUB_TOKEN: ${{ steps.get_workflow_token.outputs.token }} 
         with:
           script: |
-            const github = require('@actions/github');
             const team = await github.teams.listMembersInOrg({
               org: context.repo.owner,
               team_slug: 'test123'
@@ -55,7 +54,6 @@ jobs:
           GITHUB_TOKEN: ${{ steps.get_workflow_token.outputs.token }} 
         with:
           script: |
-            const github = require('@actions/github');
             const users = '${{ steps.read-users.outputs.users }}'.split(' ');
             const teamMembers = ${{ steps.get-team-members.outputs.result }};
             
