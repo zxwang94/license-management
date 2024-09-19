@@ -38,19 +38,19 @@ jobs:
         run: |
           $users = (Get-Content users.json | ConvertFrom-Json).PSObject.Properties.Name 
           Write-Host "Users: $users"
-          $team_members = gh api orgs/${{ github.repository_owner }}/teams/copilot-licenses-users/members | ConvertFrom-Json | ForEach-Object { $_.login }
+          $team_members = gh api orgs/${{ github.repository_owner }}/teams/test123/members | ConvertFrom-Json | ForEach-Object { $_.login }
           Write-Host "Team members: $team_members"
 
           # Add missing users to the team
           foreach ($user in $users) {
             if (-not $team_members.Contains($user)) {
-              gh api --method PUT orgs/${{ github.repository_owner }}/teams/copilot-licenses-users/memberships/$user
+              gh api --method PUT orgs/${{ github.repository_owner }}/teams/test123/memberships/$user
             }
           }
 
           # Remove users not in the list
           foreach ($member in $team_members) {
             if (-not $users.Contains($member)) {
-              gh api --method DELETE orgs/${{ github.repository_owner }}/teams/copilot-licenses-users/memberships/$member
+              gh api --method DELETE orgs/${{ github.repository_owner }}/teams/test123/memberships/$member
             }
           }
