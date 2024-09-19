@@ -42,7 +42,7 @@ jobs:
           Write-Host "Team members: $team_members"
 
           # Add missing users to the team
-          Write-Host "Checking for missing uses in team"
+          Write-Host "Checking for missing users in team"
           foreach ($user in $users) {
             Write-Host "Checking $user"
             if (-not $team_members.Contains($user)) {
