@@ -43,14 +43,18 @@ jobs:
 
           # Add missing users to the team
           foreach ($user in $users) {
+            Write-Host "Checking $user"
             if (-not $team_members.Contains($user)) {
+              Write-Host "Adding $user"
               gh api --method PUT orgs/${{ github.repository_owner }}/teams/test123/memberships/$user
             }
           }
 
           # Remove users not in the list
           foreach ($member in $team_members) {
+            Write-Host "Checking $member"
             if (-not $users.Contains($member)) {
+              Write-Host "Removing $member"
               gh api --method DELETE orgs/${{ github.repository_owner }}/teams/test123/memberships/$member
             }
           }
