@@ -43,7 +43,7 @@ jobs:
           Write-Host "Users: $users"
 
           Write-Host "Getting team members from Github API"
-          $team_members = gh api orgs/${{ github.repository_owner }}/teams/${{ vars.TEAM_SLUG }}/members | ConvertFrom-Json | ForEach-Object { $_.login }
+          $team_members = gh api orgs/${{ github.repository_owner }}/teams/copilot-licenced-users/members | ConvertFrom-Json | ForEach-Object { $_.login }
           Write-Host "Team members: $team_members"
 
       - name: Adding new members
@@ -55,7 +55,7 @@ jobs:
             Write-Host "Checking $user"
             if (-not $team_members.Contains($user)) {
               Write-Host "Adding $user"
-              gh api --method PUT orgs/${{ github.repository_owner }}/teams/${{ vars.TEAM_SLUG }}/memberships/$user
+              gh api --method PUT orgs/${{ github.repository_owner }}/teams/copilot-licenced-users/memberships/$user
             }
           }
 
