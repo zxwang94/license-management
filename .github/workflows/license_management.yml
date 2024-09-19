@@ -31,14 +31,12 @@ jobs:
 
       - name: Authenticate GitHub CLI
         run: |
-                   
+          Write-Host "Authenticating with GitHub CLI"
+          echo ${{ steps.get_workflow_token.outputs.token }}  | gh auth login --with-token       
 
-      - name: Sync team members
+      - name: Collecting membership information
         shell: pwsh
         run: |
-          Write-Host "Authenticating with GitHub CLI"
-          echo ${{ steps.get_workflow_token.outputs.token }}  | gh auth login --with-token 
-
           Write-Host "Getting users from file"
           $users = (Get-Content users.json | ConvertFrom-Json).PSObject.Properties.Name 
           Write-Host "Users: $users"
@@ -49,6 +47,9 @@ jobs:
           $team_members = gh api orgs/${{ github.repository_owner }}/teams/test123/members | ConvertFrom-Json | ForEach-Object { $_.login }
           Write-Host "Team members: $team_members"
 
+      - name: Adding new members
+        shell: pwsh
+        run: |
           # Add missing users to the team
           Write-Host "Checking for missing users in team"
           foreach ($user in $users) {
@@ -59,6 +60,9 @@ jobs:
             }
           }
 
+      - name: Removing old members
+        shell: pwsh
+        run: |
           # Remove users not in the list
           Write-Host "Checking for users to remove from team"
           foreach ($member in $team_members) {
