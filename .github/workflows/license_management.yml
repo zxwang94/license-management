@@ -43,6 +43,8 @@ jobs:
           $users = (Get-Content users.json | ConvertFrom-Json).PSObject.Properties.Name 
           Write-Host "Users: $users"
 
+          Write-host "Repo owner: ${{ github.repository_owner }}"
+
           Write-Host "Getting team members from Github API"
           $team_members = gh api orgs/${{ github.repository_owner }}/teams/test123/members | ConvertFrom-Json | ForEach-Object { $_.login }
           Write-Host "Team members: $team_members"
