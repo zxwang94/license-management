@@ -31,13 +31,19 @@ jobs:
 
       - name: Authenticate GitHub CLI
         run: |
-          echo ${{ steps.get_workflow_token.outputs.token }}  | gh auth login --with-token          
+                   
 
       - name: Sync team members
         shell: pwsh
         run: |
+          Write-Host "Authenticating with GitHub CLI"
+          echo ${{ steps.get_workflow_token.outputs.token }}  | gh auth login --with-token 
+
+          Write-Host "Getting users from file"
           $users = (Get-Content users.json | ConvertFrom-Json).PSObject.Properties.Name 
           Write-Host "Users: $users"
+
+          Write-Host "Getting team members from Github API"
           $team_members = gh api orgs/${{ github.repository_owner }}/teams/test123/members | ConvertFrom-Json | ForEach-Object { $_.login }
           Write-Host "Team members: $team_members"
 
