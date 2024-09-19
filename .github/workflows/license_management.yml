@@ -1,0 +1,59 @@
+name: Mirror Users with Team
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  mirror-users:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Read users.json
+        id: read-users
+        run: |
+          users=$(jq -r 'keys[]' users.json)
+          echo "::set-output name=users::$users"
+
+      - name: Get team members
+        id: get-team-members
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const team = await github.teams.listMembersInOrg({
+              org: context.repo.owner,
+              team_slug: 'test123'
+            });
+            return team.data.map(member => member.login);
+
+      - name: Sync team members
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const users = '${{ steps.read-users.outputs.users }}'.split(' ');
+            const teamMembers = ${{ steps.get-team-members.outputs.result }};
+            
+            // Add missing users to the team
+            for (const user of users) {
+              if (!teamMembers.includes(user)) {
+                await github.teams.addOrUpdateMembershipForUserInOrg({
+                  org: context.repo.owner,
+                  team_slug: 'test123',
+                  username: user
+                });
+              }
+            }
+
+            // Remove users not in the list
+            for (const member of teamMembers) {
+              if (!users.includes(member)) {
+                await github.teams.removeMembershipForUserInOrg({
+                  org: context.repo.owner,
+                  team_slug: 'test123',
+                  username: member
+                });
+              }
+            }
