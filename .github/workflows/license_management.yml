@@ -40,6 +40,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const github = require('@actions/github');
             const team = await github.teams.listMembersInOrg({
               org: context.repo.owner,
               team_slug: 'test123'
@@ -50,6 +51,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const github = require('@actions/github');
             const users = '${{ steps.read-users.outputs.users }}'.split(' ');
             const teamMembers = ${{ steps.get-team-members.outputs.result }};
             
